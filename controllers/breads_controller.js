@@ -25,11 +25,13 @@ breads.get('/new', (req, res) => {
 })
 
 // EDIT
-breads.get('/:indexArray/edit', (req, res) => {
+breads.get('/:id/edit', (req, res) => {
+ Bread.findById(req.params.id)
+ .then(foundBread => {
   res.render('edit', {
-    bread: Bread[req.params.indexArray],
-    index: req.params.indexArray
+    bread: foundBread
   })
+ })
 })
 
 
@@ -39,7 +41,6 @@ breads.get('/:id', async (req, res) => {
     const bread = await Bread.findById(req.params.id)
     res.render('show', {
       bread: bread,
-      index: req.params.arrayIndex,
     });
   }
   catch(err) {
@@ -49,9 +50,11 @@ breads.get('/:id', async (req, res) => {
 });
 
 // DELETE
-breads.delete('/:indexArray', (req, res) => {
-  Bread.splice(req.params.bread.id, 1)
-  res.status(303).redirect('/breads')
+breads.delete('/:id', (req, res) => {
+  Bread.findByIdAndDelete(req.params.id)
+  .then(deletedBread => {
+    res.status(303).redirect('/breads')
+  })
 })
 
 // CREATE
@@ -69,14 +72,18 @@ breads.post('/', (req, res) => {
 })
 
 // UPDATE
-breads.put('/:arrayIndex', (req, res) => {
+breads.put('/:id', (req, res) => {
   if(req.body.hasGluten === 'on'){
     req.body.hasGluten = true
   } else {
     req.body.hasGluten = false
   }
-  Bread[req.params.arrayIndex] = req.body
-  res.redirect(`/breads/${req.params.arrayIndex}`)
+  Bread.findByIdAndUpdate(req.params.id, req.body, { new: true })
+  .then(updatedBread => {
+    console.log(updatedBread)
+    res.redirect(`/breads/${req.params.id}`)
+  })
+  
 })
 
 
