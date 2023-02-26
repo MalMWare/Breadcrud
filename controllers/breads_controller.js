@@ -56,11 +56,9 @@ breads.get('/:id', (req, res) => {
       })
       .catch(err => {
         console.log(err)
-        res.status('404').render('error404')
+        res.status(404).render('error404')
       })
 })
-
-
 
 // DELETE
 breads.delete('/:id', (req, res) => {
